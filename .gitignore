@@ -1,8 +1,10 @@
-# Terraform
+# Terraform working directories and local state
 **/.terraform/*
+.terraform/
 *.tfstate
 *.tfstate.*
 *.tfplan
+.terraform.lock.hcl
 crash.log
 crash.*.log
 override.tf
@@ -10,10 +12,13 @@ override.tf
 .terraformrc
 terraform.rc
 
-# 환경별 변수 파일 (민감 정보 포함 가능)
-*.tfvars
-*.tfvars.json
+# Environment-local inputs and backend config
+terraform.tfvars
+*.auto.tfvars
+*.auto.tfvars.json
+backend.tf
 
-# AWS 자격증명
+# Credentials and local keys
 *.pem
+*.key
 credentials

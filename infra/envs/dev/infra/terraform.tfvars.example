@@ -1,0 +1,13 @@
+aws_region  = "ap-northeast-2"
+project     = "team2-talkking"
+environment = "dev"
+
+allowed_ssh_cidrs = [
+  "114.206.134.218/32"
+]
+
+bastion_key_name = null
+
+cluster_endpoint_public_access_cidrs = [
+  "114.206.134.218/32"
+]

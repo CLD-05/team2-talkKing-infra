@@ -1,5 +1,6 @@
 terraform {
-  required_version = ">= 1.0.0"
+  required_version = ">= 1.10.0"
+
   required_providers {
     aws = {
       source  = "hashicorp/aws"
@@ -9,5 +10,14 @@ terraform {
 }
 
 provider "aws" {
-  region = "ap-northeast-2"
+  region = var.aws_region
+
+  default_tags {
+    tags = {
+      Project     = var.project
+      Environment = var.environment
+      ManagedBy   = "terraform"
+      Team        = "team2"
+    }
+  }
 }
