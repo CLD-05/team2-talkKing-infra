@@ -103,6 +103,4 @@ module "github_oidc" {
   github_ref_pattern  = var.github_ref_pattern
   managed_policy_arns = var.github_actions_managed_policy_arns
   tags                = local.common_tags
-
-  enable_rabbitmq = var.enable_rabbitmq
 }
