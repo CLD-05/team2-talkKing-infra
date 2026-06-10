@@ -104,3 +104,11 @@ module "github_oidc" {
   managed_policy_arns = var.github_actions_managed_policy_arns
   tags                = local.common_tags
 }
+
+module "mq" {
+  source          = "../../../modules/mq"
+  environment     = "prod"
+  mq_password     = var.mq_password
+  subnet_ids      = module.network.private_subnets
+  security_groups = [module.network.mq_sg_id]
+}
