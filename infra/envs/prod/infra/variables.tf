@@ -137,8 +137,3 @@ variable "github_actions_managed_policy_arns" {
   type    = list(string)
   default = ["arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPowerUser"]
 }
-
-variable "mq_password" {
-  type      = string
-  sensitive = true
-}

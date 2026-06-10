@@ -161,8 +161,3 @@ variable "ssm_parameters" {
   }))
   default = {}
 }
-
-variable "mq_password" {
-  type      = string
-  sensitive = true # 테라폼 로그에 비밀번호가 노출되지 않게 합니다.
-}
