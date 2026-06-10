@@ -137,14 +137,3 @@ variable "github_actions_managed_policy_arns" {
   type    = list(string)
   default = ["arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPowerUser"]
 }
-
-variable "mq_password" {
-  type      = string
-  sensitive = true
-}
-
-variable "enable_rabbitmq" {
-  description = "RabbitMQ 헬름 애드온 배포 여부 스위치"
-  type        = bool
-  default     = false
-}
