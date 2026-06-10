@@ -46,8 +46,6 @@ variable "enable_nat_gateway" {
 variable "ecr_repositories" {
   type = list(string)
   default = [
-    "team2-talkking/frontend",
-    "team2-talkking/auth-service",
     "team2-talkking/chat-service",
     "team2-talkking/notification-service",
     "team2-talkking/ai-error-analyzer"
