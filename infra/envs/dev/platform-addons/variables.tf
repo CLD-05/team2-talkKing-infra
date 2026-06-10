@@ -43,3 +43,9 @@ variable "enable_prometheus_stack" {
   type    = bool
   default = true
 }
+
+variable "enable_rabbitmq" {
+  description = "RabbitMQ 헬름 애드온 배포 여부 스위치"
+  type        = bool
+  default     = false
+}

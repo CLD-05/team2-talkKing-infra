@@ -47,3 +47,9 @@ variable "enable_prometheus_stack" {
   type    = bool
   default = true
 }
+
+variable "enable_rabbitmq" {
+  description = "EKS 클러스터 위에 헬름 기반 RabbitMQ 인프라를 배포할지 결정하는 스위치 변수입니다."
+  type        = bool
+  default     = false # 실수 배포 방지를 위해 기본값은 안전하게 꺼둠(false) 처리
+}

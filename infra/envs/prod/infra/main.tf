@@ -103,12 +103,6 @@ module "github_oidc" {
   github_ref_pattern  = var.github_ref_pattern
   managed_policy_arns = var.github_actions_managed_policy_arns
   tags                = local.common_tags
-}
 
-module "mq" {
-  source          = "../../../modules/mq"
-  environment     = "prod"
-  mq_password     = var.mq_password
-  subnet_ids      = module.network.private_subnets
-  security_groups = [module.network.mq_sg_id]
+  enable_rabbitmq = var.enable_rabbitmq
 }

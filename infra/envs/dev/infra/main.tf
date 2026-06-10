@@ -110,11 +110,3 @@ module "secrets" {
   parameters  = var.ssm_parameters
   tags        = local.common_tags
 }
-
-module "mq" {
-  source          = "../../modules/mq"
-  environment     = "dev"
-  mq_password     = var.mq_password # tfvars에 정의하세요
-  subnet_ids      = module.network.private_subnets
-  security_groups = [module.network.mq_sg_id] # 필요한 경우 네트워크 모듈에 SG 추가
-}
