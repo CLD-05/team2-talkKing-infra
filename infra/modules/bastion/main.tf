@@ -108,7 +108,7 @@ resource "aws_launch_template" "this" {
     #!/bin/bash
     set -euo pipefail
     dnf update -y
-    dnf install -y unzip curl jq tar gzip
+    dnf install -y unzip jq tar gzip
 
     curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "/tmp/awscliv2.zip"
     unzip -q /tmp/awscliv2.zip -d /tmp
