@@ -11,3 +11,4 @@ bastion_key_name = null
 cluster_endpoint_public_access_cidrs = [
   "114.206.134.218/32"
 ]
+mq_password = ""
