@@ -53,3 +53,9 @@ variable "enable_rabbitmq" {
   type        = bool
   default     = false # 실수 배포 방지를 위해 기본값은 안전하게 꺼둠(false) 처리
 }
+
+variable "rabbitmq_password" {
+  description = "RabbitMQ 마스터 계정 비밀번호"
+  type        = string
+  sensitive   = true # 🔐 테라폼 콘솔 로그에 비밀번호가 평문으로 찍히는 것을 방지
+}

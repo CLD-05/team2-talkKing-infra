@@ -12,4 +12,8 @@ module "addons" {
   enable_external_secrets             = var.enable_external_secrets
   enable_argocd                       = var.enable_argocd
   enable_prometheus_stack             = var.enable_prometheus_stack
+
+  # 🎯여기에 래빗엠큐 활성화 스위치를 추가해줍니다!
+  enable_rabbitmq   = var.enable_rabbitmq
+  rabbitmq_password = var.rabbitmq_password
 }

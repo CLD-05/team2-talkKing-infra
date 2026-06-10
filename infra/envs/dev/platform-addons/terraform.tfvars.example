@@ -5,3 +5,6 @@ cluster_name              = "team2-talkking-dev-cluster"
 vpc_id                    = "vpc-01f1e02c546555470"
 alb_controller_role_arn   = "arn:aws:iam::495599735720:role/team2-talkking-dev-cluster-alb-controller"
 external_secrets_role_arn = "arn:aws:iam::495599735720:role/team2-talkking-dev-cluster-external-secrets"
+
+enable_rabbitmq = false
+rabbitmq_password = "talkkingdev123!"

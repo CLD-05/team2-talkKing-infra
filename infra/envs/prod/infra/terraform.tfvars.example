@@ -7,3 +7,5 @@ allowed_ssh_cidrs = [
 ]
 
 bastion_key_name = null
+
+enable_rabbitmq = true

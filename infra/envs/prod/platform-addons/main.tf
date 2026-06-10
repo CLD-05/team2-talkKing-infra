@@ -12,4 +12,7 @@ module "addons" {
   enable_external_secrets             = var.enable_external_secrets
   enable_argocd                       = var.enable_argocd
   enable_prometheus_stack             = var.enable_prometheus_stack
+
+  enable_rabbitmq   = var.enable_rabbitmq
+  rabbitmq_password = var.rabbitmq_password
 }
