@@ -122,9 +122,19 @@ variable "db_skip_final_snapshot" {
   default = true
 }
 
+variable "db_additional_allowed_security_group_ids" {
+  type    = list(string)
+  default = []
+}
+
 variable "redis_node_type" {
   type    = string
   default = "cache.t3.micro"
+}
+
+variable "redis_additional_allowed_security_group_ids" {
+  type    = list(string)
+  default = []
 }
 
 variable "github_owner" {

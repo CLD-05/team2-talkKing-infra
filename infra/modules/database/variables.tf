@@ -23,6 +23,12 @@ variable "eks_node_security_group_id" {
   type        = string
 }
 
+variable "additional_allowed_security_group_ids" {
+  description = "Additional source security group IDs allowed to access RDS."
+  type        = list(string)
+  default     = []
+}
+
 variable "engine" {
   description = "RDS engine."
   type        = string

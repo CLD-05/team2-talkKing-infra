@@ -35,6 +35,18 @@ resource "aws_security_group_rule" "from_eks_nodes" {
   description              = "Allow Redis traffic from EKS nodes."
 }
 
+resource "aws_security_group_rule" "from_additional_security_groups" {
+  for_each = toset(var.additional_allowed_security_group_ids)
+
+  type                     = "ingress"
+  from_port                = var.port
+  to_port                  = var.port
+  protocol                 = "tcp"
+  source_security_group_id = each.value
+  security_group_id        = aws_security_group.this.id
+  description              = "Allow Redis traffic from ${each.value}."
+}
+
 resource "aws_security_group_rule" "egress" {
   type              = "egress"
   from_port         = 0
