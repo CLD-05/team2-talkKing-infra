@@ -35,6 +35,18 @@ resource "aws_security_group_rule" "from_eks_nodes" {
   description              = "Allow database traffic from EKS nodes."
 }
 
+resource "aws_security_group_rule" "from_additional_security_groups" {
+  for_each = toset(var.additional_allowed_security_group_ids)
+
+  type                     = "ingress"
+  from_port                = var.db_port
+  to_port                  = var.db_port
+  protocol                 = "tcp"
+  source_security_group_id = each.value
+  security_group_id        = aws_security_group.this.id
+  description              = "Allow database traffic from ${each.value}."
+}
+
 resource "aws_security_group_rule" "egress" {
   type              = "egress"
   from_port         = 0

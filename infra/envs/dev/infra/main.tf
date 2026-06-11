@@ -71,11 +71,14 @@ module "database" {
   vpc_id                     = module.network.vpc_id
   database_subnet_ids        = module.network.database_subnet_ids
   eks_node_security_group_id = module.eks.node_security_group_id
-  instance_class             = var.db_instance_class
-  db_name                    = var.db_name
-  deletion_protection        = var.db_deletion_protection
-  skip_final_snapshot        = var.db_skip_final_snapshot
-  tags                       = local.common_tags
+  additional_allowed_security_group_ids = distinct(
+    var.db_additional_allowed_security_group_ids
+  )
+  instance_class      = var.db_instance_class
+  db_name             = var.db_name
+  deletion_protection = var.db_deletion_protection
+  skip_final_snapshot = var.db_skip_final_snapshot
+  tags                = local.common_tags
 }
 
 module "elasticache" {
@@ -86,8 +89,12 @@ module "elasticache" {
   vpc_id                     = module.network.vpc_id
   private_subnet_ids         = module.network.private_subnet_ids
   eks_node_security_group_id = module.eks.node_security_group_id
-  node_type                  = var.redis_node_type
-  tags                       = local.common_tags
+  additional_allowed_security_group_ids = distinct(concat(
+    [module.eks.cluster_security_group_id],
+    var.redis_additional_allowed_security_group_ids
+  ))
+  node_type = var.redis_node_type
+  tags      = local.common_tags
 }
 
 module "github_oidc" {

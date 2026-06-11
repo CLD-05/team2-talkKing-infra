@@ -107,9 +107,19 @@ variable "db_name" {
   default = "talkking"
 }
 
+variable "db_additional_allowed_security_group_ids" {
+  type    = list(string)
+  default = []
+}
+
 variable "redis_node_type" {
   type    = string
   default = "cache.t3.small"
+}
+
+variable "redis_additional_allowed_security_group_ids" {
+  type    = list(string)
+  default = []
 }
 
 variable "github_owner" {
