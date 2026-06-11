@@ -154,7 +154,10 @@ resource "aws_iam_policy" "external_secrets" {
           "secretsmanager:GetSecretValue",
           "secretsmanager:DescribeSecret"
         ]
-        Resource = "arn:aws:secretsmanager:${var.aws_region}:*:secret:${var.project}/${var.environment}/*"
+        Resource = [
+          "arn:aws:secretsmanager:${var.aws_region}:*:secret:${var.project}/${var.environment}/*",
+          "arn:aws:secretsmanager:${var.aws_region}:*:secret:${var.environment}/talkking/*"
+        ]
       },
       {
         Effect   = "Allow"
