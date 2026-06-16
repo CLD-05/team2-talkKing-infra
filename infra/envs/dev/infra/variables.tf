@@ -127,6 +127,31 @@ variable "db_additional_allowed_security_group_ids" {
   default = []
 }
 
+variable "alert_history_db_name" {
+  type    = string
+  default = "errorops"
+}
+
+variable "alert_history_db_instance_class" {
+  type    = string
+  default = "db.t3.micro"
+}
+
+variable "alert_history_db_engine_version" {
+  type    = string
+  default = "16.9"
+}
+
+variable "alert_history_db_parameter_group_family" {
+  type    = string
+  default = "postgres16"
+}
+
+variable "alert_history_db_master_username" {
+  type    = string
+  default = "postgres"
+}
+
 variable "redis_node_type" {
   type    = string
   default = "cache.t3.micro"

@@ -81,6 +81,38 @@ module "database" {
   tags                = local.common_tags
 }
 
+module "alert_history_database" {
+  source = "../../../modules/database-postgres"
+
+  project     = var.project
+  environment = var.environment
+
+  vpc_id                     = module.network.vpc_id
+  database_subnet_ids        = module.network.database_subnet_ids
+  eks_node_security_group_id = module.eks.node_security_group_id
+
+  additional_allowed_security_group_ids = distinct(
+    var.db_additional_allowed_security_group_ids
+  )
+
+  engine                 = "postgres"
+  engine_version         = var.alert_history_db_engine_version
+  parameter_group_family = var.alert_history_db_parameter_group_family
+
+  db_port = 5432
+
+  db_name = var.alert_history_db_name
+
+  master_username = var.alert_history_db_master_username
+
+  instance_class = var.alert_history_db_instance_class
+
+  deletion_protection = false
+  skip_final_snapshot = true
+
+  tags = local.common_tags
+}
+
 module "elasticache" {
   source = "../../../modules/elasticache"
 
