@@ -11,3 +11,7 @@ bastion_key_name = null
 cluster_endpoint_public_access_cidrs = [
   "114.206.134.218/32"
 ]
+
+alert_history_db_name            = "errorops"
+alert_history_db_instance_class  = "db.t3.micro"
+alert_history_db_engine_version  = "16.4"

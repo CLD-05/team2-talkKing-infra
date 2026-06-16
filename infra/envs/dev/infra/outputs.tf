@@ -62,3 +62,13 @@ output "redis_primary_endpoint" {
 output "github_actions_role_arn" {
   value = module.github_oidc.role_arn
 }
+
+output "alert_history_db_endpoint" {
+  description = "Alert History PostgreSQL endpoint."
+  value       = module.alert_history_database.db_endpoint
+}
+
+output "alert_history_db_secret_arn" {
+  description = "Alert History PostgreSQL secret ARN."
+  value       = module.alert_history_database.db_secret_arn
+}
