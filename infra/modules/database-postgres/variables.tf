@@ -24,14 +24,10 @@ variable "eks_node_security_group_id" {
 }
 
 variable "additional_allowed_security_group_ids" {
-  description = "Map of description to security group ID allowed to access RDS. (e.g. { bastion = 'sg-123' })"
-  type        = map(string)
-  default     = {}
+  description = "Additional source security group IDs allowed to access RDS."
+  type        = list(string)
+  default     = []
 }
-
-# =========================
-# PostgreSQL Settings
-# =========================
 
 variable "engine" {
   description = "RDS engine."
@@ -42,14 +38,13 @@ variable "engine" {
 variable "engine_version" {
   description = "RDS PostgreSQL engine version."
   type        = string
-  default     = "15.4"
+  default     = "16.9"
 }
 
-# aws_db_parameter_group의 family 설정을 동적으로 맞추기 위해 추가하면 좋음.
 variable "parameter_group_family" {
   description = "Database parameter group family."
   type        = string
-  default     = "postgres15"
+  default     = "postgres16"
 }
 
 variable "instance_class" {
@@ -73,13 +68,13 @@ variable "max_allocated_storage" {
 variable "db_name" {
   description = "Initial database name."
   type        = string
-  default     = "talkking"
+  default     = "errorops"
 }
 
 variable "master_username" {
   description = "RDS master username."
   type        = string
-  default     = "postgres_admin"
+  default     = "postgres"
 }
 
 variable "db_port" {

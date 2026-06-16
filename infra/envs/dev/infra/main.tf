@@ -95,14 +95,15 @@ module "alert_history_database" {
     var.db_additional_allowed_security_group_ids
   )
 
-  engine         = "postgres"
-  engine_version = var.alert_history_db_engine_version
+  engine                 = "postgres"
+  engine_version         = var.alert_history_db_engine_version
+  parameter_group_family = var.alert_history_db_parameter_group_family
 
   db_port = 5432
 
   db_name = var.alert_history_db_name
 
-  master_username = "postgres"
+  master_username = var.alert_history_db_master_username
 
   instance_class = var.alert_history_db_instance_class
 

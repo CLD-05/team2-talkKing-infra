@@ -7,34 +7,35 @@ locals {
 }
 
 resource "aws_db_subnet_group" "this" {
-  name       = "${var.project}-${var.environment}-db-subnet-group"
+  name       = "${var.project}-${var.environment}-alert-history-db-subnet-group"
   subnet_ids = var.database_subnet_ids
 
   tags = merge(local.common_tags, {
-    Name = "${var.project}-${var.environment}-db-subnet-group"
+    Name = "${var.project}-${var.environment}-alert-history-db-subnet-group"
   })
 }
 
-# PostgreSQL 커스텀 파라미터 그룹 추가
 resource "aws_db_parameter_group" "this" {
-  name   = "${var.project}-${var.environment}-pg-parameter-group"
-  family = "postgres16" # var.engine_version 버전에 맞게 매칭 (예: postgres15, postgres16)
+  name   = "${var.project}-${var.environment}-alert-history-pg-parameter-group"
+  family = var.parameter_group_family
 
   parameter {
     name  = "timezone"
     value = "Asia/Seoul"
   }
 
-  tags = local.common_tags
+  tags = merge(local.common_tags, {
+    Name = "${var.project}-${var.environment}-alert-history-pg-parameter-group"
+  })
 }
 
 resource "aws_security_group" "this" {
-  name        = "${var.project}-${var.environment}-db-sg"
-  description = "RDS security group."
+  name        = "${var.project}-${var.environment}-alert-history-db-sg"
+  description = "Alert history PostgreSQL security group."
   vpc_id      = var.vpc_id
 
   tags = merge(local.common_tags, {
-    Name = "${var.project}-${var.environment}-db-sg"
+    Name = "${var.project}-${var.environment}-alert-history-db-sg"
   })
 }
 
@@ -45,7 +46,7 @@ resource "aws_security_group_rule" "from_eks_nodes" {
   protocol                 = "tcp"
   source_security_group_id = var.eks_node_security_group_id
   security_group_id        = aws_security_group.this.id
-  description              = "Allow database traffic from EKS nodes."
+  description              = "Allow PostgreSQL traffic from EKS nodes."
 }
 
 resource "aws_security_group_rule" "from_additional_security_groups" {
@@ -57,7 +58,7 @@ resource "aws_security_group_rule" "from_additional_security_groups" {
   protocol                 = "tcp"
   source_security_group_id = each.value
   security_group_id        = aws_security_group.this.id
-  description              = "Allow database traffic from allowed security group: ${each.value}."
+  description              = "Allow PostgreSQL traffic from ${each.value}."
 }
 
 resource "aws_security_group_rule" "egress" {
@@ -89,7 +90,7 @@ resource "aws_db_instance" "this" {
   manage_master_user_password = true
 
   db_subnet_group_name   = aws_db_subnet_group.this.name
-  parameter_group_name   = aws_db_parameter_group.this.name # 파라미터 그룹 연결
+  parameter_group_name   = aws_db_parameter_group.this.name
   vpc_security_group_ids = [aws_security_group.this.id]
   multi_az               = var.multi_az
   publicly_accessible    = false
@@ -97,9 +98,9 @@ resource "aws_db_instance" "this" {
   backup_retention_period = var.backup_retention_period
   deletion_protection     = var.deletion_protection
   skip_final_snapshot     = var.skip_final_snapshot
-
-  # 명시적으로 식별자를 주되 skip_final_snapshot 유무로 동작을 제어하는 것이 밸리데이션 에러를 줄입니다.
-  final_snapshot_identifier = "${var.project}-${var.environment}-alert-history-final-snapshot"
+  final_snapshot_identifier = var.skip_final_snapshot ? null : (
+    "${var.project}-${var.environment}-alert-history-final-snapshot"
+  )
 
   tags = merge(local.common_tags, {
     Name = "${var.project}-${var.environment}-alert-history-db"
