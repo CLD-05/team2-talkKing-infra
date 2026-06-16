@@ -71,24 +71,6 @@ resource "aws_security_group_rule" "egress" {
   description       = "Allow all outbound traffic."
 }
 
-# ==============================================================================
-# 🎯 1. 추가: 시크릿 매니저 보관함 명시적 생성 (난수 이름 자동 생성 원천 차단)
-# ==============================================================================
-resource "aws_secretsmanager_secret" "alert_history_db_secret" {
-  # 쿠버네티스(ExternalSecret)에서 찾기 편하도록 명시적으로 고정된 이름을 선언합니다.
-  name = "${var.project}-${var.environment}-alert-history-db"
-
-  # 테스트/개발 환경에서 재배포를 빠르게 할 수 있도록 삭제 유예 기간을 없앱니다 (0일 즉시삭제).
-  recovery_window_in_days = 0 
-
-  tags = merge(local.common_tags, {
-    Name = "${var.project}-${var.environment}-alert-history-db-secret"
-  })
-}
-
-# ==============================================================================
-# 🔄 2. 수정: 명시적으로 생성한 시크릿 보관함을 바인딩하도록 인스턴스 설정 수정
-# ==============================================================================
 resource "aws_db_instance" "this" {
   identifier = "${var.project}-${var.environment}-alert-history-db"
 
@@ -105,21 +87,7 @@ resource "aws_db_instance" "this" {
   username = var.master_username
   port     = var.db_port
 
-  # ----------------------------------------------------------------------------
-  # 🔥 [중요 변경점] AWS가 독단적으로 난수 금고를 파지 않고, 
-  # 위에서 우리가 지정한 고정 이름의 시크릿에 패스워드를 박아넣도록 키 맵핑을 강제합니다.
-  # ----------------------------------------------------------------------------
-  manage_master_user_password   = true
-  master_user_secret_kms_key_id = "alias/aws/secretsmanager" # 기본 Secrets Manager KMS 사용
-
-  # 패스워드와 키 관리 흐름을 시크릿 매니저에 이관하므로, 테라폼 변경 감지(Diff)에서 제외시킵니다.
-  lifecycle {
-    ignore_changes = [
-      password,
-      master_user_secret_kms_key_id
-    ]
-  }
-  # ----------------------------------------------------------------------------
+  manage_master_user_password = true
 
   db_subnet_group_name   = aws_db_subnet_group.this.name
   parameter_group_name   = aws_db_parameter_group.this.name
@@ -136,5 +104,33 @@ resource "aws_db_instance" "this" {
 
   tags = merge(local.common_tags, {
     Name = "${var.project}-${var.environment}-alert-history-db"
+  })
+}
+
+resource "aws_secretsmanager_secret" "app" {
+  name                    = "${var.project}/${var.environment}/alert-history-db"
+  recovery_window_in_days = 0
+
+  tags = merge(local.common_tags, {
+    Name = "${var.project}-${var.environment}-alert-history-db-secret"
+  })
+}
+
+data "aws_secretsmanager_secret_version" "managed_master" {
+  secret_id = aws_db_instance.this.master_user_secret[0].secret_arn
+
+  depends_on = [aws_db_instance.this]
+}
+
+resource "aws_secretsmanager_secret_version" "app" {
+  secret_id = aws_secretsmanager_secret.app.id
+  secret_string = jsonencode({
+    username             = var.master_username
+    password             = jsondecode(data.aws_secretsmanager_secret_version.managed_master.secret_string).password
+    engine               = var.engine
+    host                 = aws_db_instance.this.address
+    port                 = aws_db_instance.this.port
+    dbname               = aws_db_instance.this.db_name
+    dbInstanceIdentifier = aws_db_instance.this.identifier
   })
 }

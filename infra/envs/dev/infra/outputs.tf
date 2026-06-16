@@ -72,3 +72,13 @@ output "alert_history_db_secret_arn" {
   description = "Alert History PostgreSQL secret ARN."
   value       = module.alert_history_database.db_secret_arn
 }
+
+output "alert_history_db_secret_name" {
+  description = "Alert History PostgreSQL secret name."
+  value       = module.alert_history_database.db_secret_name
+}
+
+output "alert_history_db_managed_secret_arn" {
+  description = "AWS-managed Alert History PostgreSQL master secret ARN."
+  value       = module.alert_history_database.db_managed_secret_arn
+}
