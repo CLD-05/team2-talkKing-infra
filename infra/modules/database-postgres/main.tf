@@ -106,3 +106,31 @@ resource "aws_db_instance" "this" {
     Name = "${var.project}-${var.environment}-alert-history-db"
   })
 }
+
+resource "aws_secretsmanager_secret" "app" {
+  name                    = "${var.project}/${var.environment}/alert-history-db"
+  recovery_window_in_days = 0
+
+  tags = merge(local.common_tags, {
+    Name = "${var.project}-${var.environment}-alert-history-db-secret"
+  })
+}
+
+data "aws_secretsmanager_secret_version" "managed_master" {
+  secret_id = aws_db_instance.this.master_user_secret[0].secret_arn
+
+  depends_on = [aws_db_instance.this]
+}
+
+resource "aws_secretsmanager_secret_version" "app" {
+  secret_id = aws_secretsmanager_secret.app.id
+  secret_string = jsonencode({
+    username             = var.master_username
+    password             = jsondecode(data.aws_secretsmanager_secret_version.managed_master.secret_string).password
+    engine               = var.engine
+    host                 = aws_db_instance.this.address
+    port                 = aws_db_instance.this.port
+    dbname               = aws_db_instance.this.db_name
+    dbInstanceIdentifier = aws_db_instance.this.identifier
+  })
+}

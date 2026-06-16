@@ -24,7 +24,17 @@ output "db_name" {
 }
 
 output "db_secret_arn" {
-  description = "Secrets Manager ARN for AWS-managed master password."
+  description = "Application-friendly Secrets Manager ARN for PostgreSQL connection."
+  value       = aws_secretsmanager_secret.app.arn
+}
+
+output "db_secret_name" {
+  description = "Application-friendly Secrets Manager name for PostgreSQL connection."
+  value       = aws_secretsmanager_secret.app.name
+}
+
+output "db_managed_secret_arn" {
+  description = "AWS-managed Secrets Manager ARN for the RDS master password."
   value       = try(aws_db_instance.this.master_user_secret[0].secret_arn, null)
 }
 
