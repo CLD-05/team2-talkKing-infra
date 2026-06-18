@@ -19,6 +19,24 @@ variable "namespace" {
   description = "장애를 주입할 쿠버네티스 네임스페이스"
 }
 
+variable "pod_selector" {
+  type        = string
+  description = "Kubernetes label selector for pods targeted by FIS experiments."
+  default     = "app=chat"
+}
+
+variable "kubernetes_service_account" {
+  type        = string
+  description = "Kubernetes service account used by FIS EKS pod actions."
+  default     = "fis-experiment"
+}
+
+variable "permissions_boundary_arn" {
+  type        = string
+  description = "Permissions boundary ARN required for IAM roles created by the team."
+  default     = "arn:aws:iam::495599735720:policy/TeamRuntimeBoundary"
+}
+
 variable "tags" {
   type        = map(string)
   default     = {}

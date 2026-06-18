@@ -1,5 +1,7 @@
 resource "aws_iam_role" "fis_role" {
-  name = "${var.project}-${var.environment}-fis-role"
+  name                 = "${var.project}-${var.environment}-fis-role"
+  permissions_boundary = var.permissions_boundary_arn
+
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [{
