@@ -82,6 +82,12 @@ variable "cluster_endpoint_public_access_cidrs" {
   default = ["0.0.0.0/0"]
 }
 
+variable "additional_access_entries" {
+  type        = any
+  description = "Additional EKS access entries."
+  default     = {}
+}
+
 variable "node_instance_types" {
   type    = list(string)
   default = ["t3.medium"]

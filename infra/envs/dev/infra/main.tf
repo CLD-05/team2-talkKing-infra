@@ -54,6 +54,7 @@ module "eks" {
   private_subnet_ids                   = module.network.private_subnet_ids
   bastion_role_arn                     = var.enable_bastion ? module.bastion[0].role_arn : null
   enable_bastion_access_entry          = var.enable_bastion
+  additional_access_entries            = var.additional_access_entries
   cluster_endpoint_public_access       = var.cluster_endpoint_public_access
   cluster_endpoint_public_access_cidrs = var.cluster_endpoint_public_access_cidrs
   node_instance_types                  = var.node_instance_types
