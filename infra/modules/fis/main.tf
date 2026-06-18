@@ -1,5 +1,5 @@
-resource "aws_fis_experiment_template" "pod_delete" {
-  description = "FIS Pod Delete Experiment for chat-service"
+resource "aws_fis_experiment_template" "pod_memory_stress" {
+  description = "FIS Pod Memory Stress Experiment to Trigger High Restart Rate Alert"
   role_arn    = aws_iam_role.fis_role.arn
 
   stop_condition {
@@ -20,8 +20,8 @@ resource "aws_fis_experiment_template" "pod_delete" {
   }
 
   action {
-    name      = "delete-pods-action"
-    action_id = "aws:eks:pod-delete"
+    name      = "memory-stress-action"
+    action_id = "aws:eks:pod-memory-stress"
 
     target {
       key   = "Pods"
@@ -29,18 +29,23 @@ resource "aws_fis_experiment_template" "pod_delete" {
     }
 
     parameter {
-      key   = "kubernetesServiceAccount"
-      value = var.kubernetes_service_account
+      key   = "duration"
+      value = "PT5M"
+    }
+
+    parameter {
+      key   = "percent"
+      value = "95"
     }
 
     parameter {
       key   = "kubernetesServiceAccount"
-      value = "fis-experiment"
+      value = var.kubernetes_service_account
     }
   }
 
   tags = merge(var.tags, {
-    Name = "${var.project}-${var.environment}-fis-chat-service-delete"
+    Name = "${var.project}-${var.environment}-fis-chat-memory-stress"
   })
 }
 
@@ -87,11 +92,6 @@ resource "aws_fis_experiment_template" "pod_latency" {
     parameter {
       key   = "kubernetesServiceAccount"
       value = var.kubernetes_service_account
-    }
-
-    parameter {
-      key   = "kubernetesServiceAccount"
-      value = "fis-experiment"
     }
   }
 
@@ -143,11 +143,6 @@ resource "aws_fis_experiment_template" "pod_cpu_stress" {
     parameter {
       key   = "kubernetesServiceAccount"
       value = var.kubernetes_service_account
-    }
-
-    parameter {
-      key   = "kubernetesServiceAccount"
-      value = "fis-experiment"
     }
   }
 
