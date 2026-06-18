@@ -32,6 +32,11 @@ resource "aws_fis_experiment_template" "pod_delete" {
       key   = "kubernetesServiceAccount"
       value = var.kubernetes_service_account
     }
+
+    parameter {
+      key   = "kubernetesServiceAccount"
+      value = "fis-experiment"
+    }
   }
 
   tags = merge(var.tags, {
@@ -83,6 +88,11 @@ resource "aws_fis_experiment_template" "pod_latency" {
       key   = "kubernetesServiceAccount"
       value = var.kubernetes_service_account
     }
+
+    parameter {
+      key   = "kubernetesServiceAccount"
+      value = "fis-experiment"
+    }
   }
 
   tags = merge(var.tags, {
@@ -133,6 +143,11 @@ resource "aws_fis_experiment_template" "pod_cpu_stress" {
     parameter {
       key   = "kubernetesServiceAccount"
       value = var.kubernetes_service_account
+    }
+
+    parameter {
+      key   = "kubernetesServiceAccount"
+      value = "fis-experiment"
     }
   }
 
