@@ -149,3 +149,13 @@ module "secrets" {
   parameters  = var.ssm_parameters
   tags        = local.common_tags
 }
+
+module "fis" {
+  source = "../../../modules/fis"
+
+  project     = var.project
+  environment = var.environment
+  cluster_arn = module.eks.cluster_arn # 💡 이제 정상 작동함
+  namespace   = "talkking-dev"
+  tags        = local.common_tags
+}

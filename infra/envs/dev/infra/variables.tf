@@ -194,3 +194,21 @@ variable "ssm_parameters" {
   }))
   default = {}
 }
+
+variable "alert_history_db_name" {
+  description = "Alert History PostgreSQL database name."
+  type        = string
+  default     = "errorops"
+}
+
+variable "alert_history_db_instance_class" {
+  description = "Alert History PostgreSQL instance class."
+  type        = string
+  default     = "db.t3.micro"
+}
+
+variable "alert_history_db_engine_version" {
+  description = "Alert History PostgreSQL engine version."
+  type        = string
+  default     = "16.4"
+}
