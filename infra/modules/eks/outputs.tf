@@ -52,5 +52,5 @@ output "external_secrets_role_arn" {
 output "cluster_arn" {
   description = "The Amazon Resource Name (ARN) of the EKS cluster"
   # 해당 모듈 안에서 aws_eks_cluster 리소스가 정의된 이름을 적어줍니다. (예: aws_eks_cluster.this.arn)
-  value = aws_eks_cluster.this.arn
+  value = module.eks.cluster_arn
 }
