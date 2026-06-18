@@ -19,8 +19,13 @@ resource "aws_iam_role_policy" "fis_policy" {
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [{
-      Effect   = "Allow"
-      Action   = ["eks:DescribeCluster", "eks:ListClusters"]
+      Effect = "Allow"
+      Action = [
+        "eks:DescribeCluster",
+        "eks:ListClusters",
+        "eks:DescribeNodegroup",
+        "eks:AccessKubernetesApi"
+      ]
       Resource = "*"
     }]
   })
