@@ -24,7 +24,8 @@ resource "aws_iam_role_policy" "fis_policy" {
         "eks:DescribeCluster",
         "eks:ListClusters",
         "eks:DescribeNodegroup",
-        "eks:AccessKubernetesApi"
+        "eks:AccessKubernetesApi",
+        "aws-marketplace:ViewSubscriptions"
       ]
       Resource = "*"
     }]

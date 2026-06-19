@@ -30,12 +30,12 @@ resource "aws_fis_experiment_template" "pod_memory_stress" {
 
     parameter {
       key   = "duration"
-      value = "PT5M"
+      value = "PT1M"
     }
 
     parameter {
       key   = "percent"
-      value = "95"
+      value = "20"
     }
 
     parameter {
