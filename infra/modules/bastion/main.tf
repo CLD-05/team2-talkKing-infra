@@ -182,3 +182,77 @@ resource "aws_instance" "this" {
     Name = "${var.project}-${var.environment}-bastion-root"
   })
 }
+# ==========================================================================
+# AWS FIS(Fault Injection Service) 장애 주입용 IAM 및 인증 리소스 추가
+# ==========================================================================
+
+# 1. 대상 EKS 클러스터 정보 참조 (OIDC 발급자 주소를 가져오기 위함)
+# 만약 이미 다른 파일에 선언되어 있다면 data 블록은 제외하셔도 됩니다.
+data "aws_eks_cluster" "target" {
+  name = "team2-talkking-dev-cluster" # 본인의 EKS 클러스터 이름 변수가 있다면 var.eks_cluster_name 등으로 대체 가능합니다.
+}
+
+# 2. OIDC Provider 고유 ID 파싱 및 ARN 구성
+locals {
+  oidc_url = replace(data.aws_eks_cluster.target.identity[0].oidc[0].issuer, "https://", "")
+  oidc_arn = "arn:aws:iam::495599735720:oidc-provider/${local.oidc_url}"
+}
+
+# 3. AWS FIS 신뢰 관계 정책 (Trust Relationship) 정의
+# (FIS 서비스 자체와 EKS OIDC 봇 양쪽 모두가 AssumeRole 할 수 있도록 허용)
+data "aws_iam_policy_document" "fis_trust" {
+  # [조항 1] AWS FIS 서비스 허용
+  statement {
+    effect  = "Allow"
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["fis.amazonaws.com"]
+    }
+  }
+
+  # [조항 2] EKS OIDC 및 특정 서비스 어카운트 허용 (IRSA 연동용 웹 자격 증명)
+  statement {
+    effect  = "Allow"
+    actions = ["sts:AssumeRoleWithWebIdentity"]
+
+    principals {
+      type        = "Federated"
+      identifiers = [local.oidc_arn]
+    }
+
+    condition {
+      test     = "StringEquals"
+      variable = "${local.oidc_url}:sub"
+      values   = ["system:serviceaccount:talkking-dev:fis-experiment"]
+    }
+  }
+}
+
+# 4. IAM 역할 생성 (기존 파일의 네이밍/태그 규칙 동기화)
+resource "aws_iam_role" "fis" {
+  name               = "${var.project}-${var.environment}-fis-role"
+  assume_role_policy = data.aws_iam_policy_document.fis_trust.json
+
+  tags = local.common_tags
+}
+
+# 5. FIS 역할이 EKS 리소스를 제어할 수 있도록 추가 권한 인라인 정책 바인딩
+# (필요에 따라 테라폼으로 완전히 관리하기 위해 추가해두면 좋습니다)
+resource "aws_iam_role_policy" "fis_eks_access" {
+  name = "${var.project}-${var.environment}-fis-eks-policy"
+  role = aws_iam_role.this.id # 배스천 호스트나 혹은 아래 fis 역할에 필요한 권한에 맞춰 바인딩 가능합니다.
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect = "Allow"
+      Action = [
+        "eks:DescribeCluster",
+        "fis:InjectFault" # FIS 주입 권한 등 필요한 액션 정의
+      ]
+      Resource = "*"
+    }]
+  })
+}
