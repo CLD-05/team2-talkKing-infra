@@ -105,3 +105,26 @@ resource "helm_release" "kube_prometheus_stack" {
 
   depends_on = [helm_release.aws_load_balancer_controller]
 }
+
+# ========================================================================
+# ConfigMap for Grafana Dashboard
+# ========================================================================
+
+resource "kubernetes_config_map" "grafana_dashboard_ai_analyzer" {
+  count = var.enable_prometheus_stack ? 1 : 0
+
+  metadata {
+    name      = "grafana-dashboard-ai-analyzer"
+    namespace = "monitoring"
+    labels = {
+      grafana_dashboard = "1"
+      release           = "kube-prometheus-stack"
+    }
+  }
+
+  data = {
+    "ai-analyzer-dashboard.json" = file("${path.module}/dashboards/ai-analyzer-dashboard.json")
+  }
+
+  depends_on = [helm_release.kube_prometheus_stack[0]]
+}
