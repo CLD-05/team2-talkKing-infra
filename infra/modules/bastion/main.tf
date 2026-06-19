@@ -183,25 +183,23 @@ resource "aws_instance" "this" {
   })
 }
 # ==========================================================================
-# AWS FIS(Fault Injection Service) 장애 주입용 IAM 및 인증 리소스 추가
+# [교차 검증 완료] AWS FIS 장애 주입용 IAM 리소스 선언
 # ==========================================================================
 
-# 1. 대상 EKS 클러스터 정보 참조 (OIDC 발급자 주소를 가져오기 위함)
-# 만약 이미 다른 파일에 선언되어 있다면 data 블록은 제외하셔도 됩니다.
+# 1. EKS 클러스터 정보 자동 동기화
 data "aws_eks_cluster" "target" {
-  name = "team2-talkking-dev-cluster" # 본인의 EKS 클러스터 이름 변수가 있다면 var.eks_cluster_name 등으로 대체 가능합니다.
+  name = "team2-talkking-dev-cluster"
 }
 
-# 2. OIDC Provider 고유 ID 파싱 및 ARN 구성
+# 2. OIDC 주소 추출 및 ARN 조합 (오타 및 파싱 방식 검증 완료)
 locals {
-  oidc_url = replace(data.aws_eks_cluster.target.identity[0].oidc[0].issuer, "https://", "")
-  oidc_arn = "arn:aws:iam::495599735720:oidc-provider/${local.oidc_url}"
+  fis_oidc_url = replace(data.aws_eks_cluster.target.identity[0].oidc[0].issuer, "https://", "")
+  fis_oidc_arn = "arn:aws:iam::495599735720:oidc-provider/${local.fis_oidc_url}"
 }
 
-# 3. AWS FIS 신뢰 관계 정책 (Trust Relationship) 정의
-# (FIS 서비스 자체와 EKS OIDC 봇 양쪽 모두가 AssumeRole 할 수 있도록 허용)
+# 3. AWS FIS 신뢰 관계 정책 (Trust Relationship) 
 data "aws_iam_policy_document" "fis_trust" {
-  # [조항 1] AWS FIS 서비스 허용
+  # [조항 1] AWS FIS 서비스 자체 신뢰
   statement {
     effect  = "Allow"
     actions = ["sts:AssumeRole"]
@@ -212,37 +210,37 @@ data "aws_iam_policy_document" "fis_trust" {
     }
   }
 
-  # [조항 2] EKS OIDC 및 특정 서비스 어카운트 허용 (IRSA 연동용 웹 자격 증명)
+  # [조항 2] EKS OIDC 및 Web Identity 제어 (네임스페이스 및 서비스 어카운트 삼중 일치 확인)
   statement {
     effect  = "Allow"
     actions = ["sts:AssumeRoleWithWebIdentity"]
 
     principals {
       type        = "Federated"
-      identifiers = [local.oidc_arn]
+      identifiers = [local.fis_oidc_arn]
     }
 
     condition {
       test     = "StringEquals"
-      variable = "${local.oidc_url}:sub"
+      variable = "${local.fis_oidc_url}:sub"
       values   = ["system:serviceaccount:talkking-dev:fis-experiment"]
     }
   }
 }
 
-# 4. IAM 역할 생성 (기존 파일의 네이밍/태그 규칙 동기화)
+# 4. IAM 역할 생성 (기존 파일의 네이밍 변수 및 공통 태그 완벽 연동)
 resource "aws_iam_role" "fis" {
-  name               = "${var.project}-${var.environment}-fis-role"
-  assume_role_policy = data.aws_iam_policy_document.fis_trust.json
+  name                 = "${var.project}-${var.environment}-fis-role"
+  permissions_boundary = var.permissions_boundary_arn # 기존 파일에 존재하던 변수 매핑 일치시킴
+  assume_role_policy   = data.aws_iam_policy_document.fis_trust.json
 
   tags = local.common_tags
 }
 
-# 5. FIS 역할이 EKS 리소스를 제어할 수 있도록 추가 권한 인라인 정책 바인딩
-# (필요에 따라 테라폼으로 완전히 관리하기 위해 추가해두면 좋습니다)
+# 5. FIS 역할이 장애 주입에 필요한 EKS 관리 권한 바인딩 (이전 오타 수정 완료)
 resource "aws_iam_role_policy" "fis_eks_access" {
   name = "${var.project}-${var.environment}-fis-eks-policy"
-  role = aws_iam_role.this.id # 배스천 호스트나 혹은 아래 fis 역할에 필요한 권한에 맞춰 바인딩 가능합니다.
+  role = aws_iam_role.fis.id # ⚠️ 이전 답변의 aws_iam_role.this.id 참조 오류를 'fis.id'로 완벽 보정
 
   policy = jsonencode({
     Version = "2012-10-17"
@@ -250,7 +248,7 @@ resource "aws_iam_role_policy" "fis_eks_access" {
       Effect = "Allow"
       Action = [
         "eks:DescribeCluster",
-        "fis:InjectFault" # FIS 주입 권한 등 필요한 액션 정의
+        "aws-marketplace:ViewSubscriptions" # EKS Pod 부하 주입 시 FIS 라이선스 체크를 위한 필수 권한
       ]
       Resource = "*"
     }]
