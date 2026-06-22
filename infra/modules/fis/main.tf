@@ -150,3 +150,44 @@ resource "aws_fis_experiment_template" "pod_cpu_stress" {
     Name = "${var.project}-${var.environment}-fis-chat-cpu-stress"
   })
 }
+
+resource "aws_fis_experiment_template" "pod_kill" {
+  description = "FIS Pod Kill Chaos Experiment to Test AI Self-Healing Pipeline"
+  role_arn    = aws_iam_role.fis_role.arn
+
+  stop_condition {
+    source = "none"
+  }
+
+  target {
+    name           = "targeted-pods"
+    resource_type  = "aws:eks:pod"
+    selection_mode = "COUNT(1)"
+
+    parameters = {
+      clusterIdentifier = var.cluster_arn
+      namespace         = var.namespace
+      selectorType      = "labelSelector"
+      selectorValue     = var.pod_selector
+    }
+  }
+
+  action {
+    name      = "pod-kill-action"
+    action_id = "aws:eks:pod-delete"
+
+    target {
+      key   = "Pods"
+      value = "targeted-pods"
+    }
+
+    parameter {
+      key   = "kubernetesServiceAccount"
+      value = var.kubernetes_service_account
+    }
+  }
+
+  tags = merge(var.tags, {
+    Name = "${var.project}-${var.environment}-fis-chat-pod-kill"
+  })
+}
