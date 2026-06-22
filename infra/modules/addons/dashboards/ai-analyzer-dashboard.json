@@ -123,7 +123,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "sum by (type) (increase(ai_analyzer_alerts_by_type_total[2h]))",
+          "expr": "sum by (type) (ai_analyzer_alerts_by_type_total)",
           "format": "table",
           "instant": true,
           "range": false,
