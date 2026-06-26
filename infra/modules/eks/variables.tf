@@ -106,6 +106,24 @@ variable "ebs_csi_driver_addon_version" {
   default     = null
 }
 
+variable "ebs_csi_policy_arn" {
+  description = "IAM policy ARN attached to the EBS CSI IRSA role."
+  type        = string
+  default     = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
+}
+
+variable "attach_load_balancer_controller_policy" {
+  description = "Whether the IRSA module should create and attach the AWS Load Balancer Controller IAM policy."
+  type        = bool
+  default     = true
+}
+
+variable "load_balancer_controller_policy_arn" {
+  description = "Existing AWS Load Balancer Controller IAM policy ARN to attach when policy creation is disabled."
+  type        = string
+  default     = null
+}
+
 variable "permissions_boundary_arn" {
   description = "Permissions boundary ARN required for IAM roles."
   type        = string

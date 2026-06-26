@@ -87,8 +87,10 @@ module "ebs_csi_irsa" {
   version = "~> 5.48"
 
   role_name                     = "${var.cluster_name}-ebs-csi-driver"
-  attach_ebs_csi_policy         = true
   role_permissions_boundary_arn = var.permissions_boundary_arn
+  role_policy_arns = {
+    ebs_csi = var.ebs_csi_policy_arn
+  }
 
   oidc_providers = {
     main = {
@@ -118,8 +120,11 @@ module "alb_controller_irsa" {
   version = "~> 5.48"
 
   role_name                              = "${var.cluster_name}-alb-controller"
-  attach_load_balancer_controller_policy = true
+  attach_load_balancer_controller_policy = var.attach_load_balancer_controller_policy
   role_permissions_boundary_arn          = var.permissions_boundary_arn
+  role_policy_arns = var.load_balancer_controller_policy_arn == null ? {} : {
+    load_balancer_controller = var.load_balancer_controller_policy_arn
+  }
 
   oidc_providers = {
     main = {
