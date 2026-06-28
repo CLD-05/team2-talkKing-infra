@@ -44,12 +44,8 @@ variable "enable_nat_gateway" {
 }
 
 variable "ecr_repositories" {
-  type = list(string)
-  default = [
-    "team2-talkking/chat-service",
-    "team2-talkking/notification-service",
-    "team2-talkking/ai-error-analyzer"
-  ]
+  type    = list(string)
+  default = []
 }
 
 variable "allowed_ssh_cidrs" {
@@ -60,6 +56,11 @@ variable "allowed_ssh_cidrs" {
 variable "bastion_key_name" {
   type    = string
   default = null
+}
+
+variable "enable_bastion" {
+  type    = bool
+  default = true
 }
 
 variable "cluster_version" {
@@ -75,6 +76,12 @@ variable "cluster_endpoint_public_access" {
 variable "cluster_endpoint_public_access_cidrs" {
   type    = list(string)
   default = []
+}
+
+variable "additional_access_entries" {
+  type        = any
+  description = "Additional EKS access entries."
+  default     = {}
 }
 
 variable "node_instance_types" {
@@ -97,6 +104,16 @@ variable "node_desired_size" {
   default = 2
 }
 
+variable "attach_load_balancer_controller_policy" {
+  type    = bool
+  default = false
+}
+
+variable "load_balancer_controller_policy_arn" {
+  type    = string
+  default = null
+}
+
 variable "db_instance_class" {
   type    = string
   default = "db.t3.small"
@@ -107,9 +124,54 @@ variable "db_name" {
   default = "talkking"
 }
 
+variable "db_deletion_protection" {
+  type    = bool
+  default = true
+}
+
+variable "db_skip_final_snapshot" {
+  type    = bool
+  default = false
+}
+
 variable "db_additional_allowed_security_group_ids" {
   type    = list(string)
   default = []
+}
+
+variable "alert_history_db_name" {
+  type    = string
+  default = "errorops"
+}
+
+variable "alert_history_db_instance_class" {
+  type    = string
+  default = "db.t3.small"
+}
+
+variable "alert_history_db_engine_version" {
+  type    = string
+  default = "16.9"
+}
+
+variable "alert_history_db_parameter_group_family" {
+  type    = string
+  default = "postgres16"
+}
+
+variable "alert_history_db_master_username" {
+  type    = string
+  default = "postgres"
+}
+
+variable "alert_history_db_deletion_protection" {
+  type    = bool
+  default = true
+}
+
+variable "alert_history_db_skip_final_snapshot" {
+  type    = bool
+  default = false
 }
 
 variable "redis_node_type" {
@@ -144,4 +206,13 @@ variable "github_ref_pattern" {
 variable "github_actions_managed_policy_arns" {
   type    = list(string)
   default = ["arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPowerUser"]
+}
+
+variable "ssm_parameters" {
+  type = map(object({
+    value       = string
+    description = optional(string, "")
+    secure      = optional(bool, true)
+  }))
+  default = {}
 }

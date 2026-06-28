@@ -16,24 +16,15 @@ resource "aws_security_group" "this" {
   })
 }
 
-resource "aws_security_group_rule" "ssh" {
-  type              = "ingress"
+resource "aws_vpc_security_group_ingress_rule" "ssh" {
+  for_each = toset(var.allowed_ssh_cidrs)
+
+  security_group_id = aws_security_group.this.id
+  cidr_ipv4         = each.value
   from_port         = 22
   to_port           = 22
-  protocol          = "tcp"
-  cidr_blocks       = var.allowed_ssh_cidrs
-  security_group_id = aws_security_group.this.id
-  description       = "SSH access to bastion."
-}
-
-resource "aws_security_group_rule" "egress" {
-  type              = "egress"
-  from_port         = 0
-  to_port           = 0
-  protocol          = "-1"
-  cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = aws_security_group.this.id
-  description       = "Allow all outbound traffic."
+  ip_protocol       = "tcp"
+  description       = "SSH access to bastion from ${each.value}."
 }
 
 data "aws_ami" "amazon_linux" {
