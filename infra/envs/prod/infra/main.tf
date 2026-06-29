@@ -73,7 +73,7 @@ module "database" {
   environment                = var.environment
   vpc_id                     = module.network.vpc_id
   database_subnet_ids        = module.network.database_subnet_ids
-  eks_node_security_group_id = module.eks.node_security_group_id
+  eks_node_security_group_id = module.eks.cluster_primary_security_group_id
   additional_allowed_security_group_ids = distinct(
     var.db_additional_allowed_security_group_ids
   )
@@ -93,7 +93,7 @@ module "alert_history_database" {
 
   vpc_id                     = module.network.vpc_id
   database_subnet_ids        = module.network.database_subnet_ids
-  eks_node_security_group_id = module.eks.node_security_group_id
+  eks_node_security_group_id = module.eks.cluster_primary_security_group_id
 
   additional_allowed_security_group_ids = distinct(
     var.db_additional_allowed_security_group_ids
@@ -124,7 +124,7 @@ module "elasticache" {
   environment                = var.environment
   vpc_id                     = module.network.vpc_id
   private_subnet_ids         = module.network.private_subnet_ids
-  eks_node_security_group_id = module.eks.node_security_group_id
+  eks_node_security_group_id = module.eks.cluster_primary_security_group_id
   additional_allowed_security_group_ids = distinct(
     var.redis_additional_allowed_security_group_ids
   )
