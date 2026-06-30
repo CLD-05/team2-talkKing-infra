@@ -1,35 +1,36 @@
-variable "create_alias_record" {
-  description = "Whether to create the Route53 alias record."
-  type        = bool
-  default     = false
-}
-
 variable "zone_name" {
-  description = "Route53 hosted zone name."
+  description = "Public Route 53 hosted zone name."
   type        = string
-  default     = ""
-}
-
-variable "private_zone" {
-  description = "Whether the hosted zone is private."
-  type        = bool
-  default     = false
 }
 
 variable "record_name" {
-  description = "DNS record name."
+  description = "DNS record name that points to the Kubernetes ALB."
   type        = string
-  default     = ""
 }
 
-variable "alias_dns_name" {
-  description = "Alias target DNS name."
-  type        = string
-  default     = ""
+variable "create_alias_record" {
+  description = "Whether to create the ALB alias record."
+  type        = bool
+  default     = true
 }
 
-variable "alias_zone_id" {
-  description = "Alias target hosted zone ID."
+variable "cluster_name" {
+  description = "EKS cluster name used by the AWS Load Balancer Controller tag."
   type        = string
-  default     = ""
+}
+
+variable "ingress_namespace" {
+  description = "Kubernetes namespace containing the Ingress."
+  type        = string
+}
+
+variable "ingress_name" {
+  description = "Kubernetes Ingress name used to locate the ALB."
+  type        = string
+}
+
+variable "tags" {
+  description = "Tags applied to the hosted zone."
+  type        = map(string)
+  default     = {}
 }

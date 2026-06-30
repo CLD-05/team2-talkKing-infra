@@ -73,7 +73,7 @@ module "database" {
   environment                = var.environment
   vpc_id                     = module.network.vpc_id
   database_subnet_ids        = module.network.database_subnet_ids
-  eks_node_security_group_id = module.eks.node_security_group_id
+  eks_node_security_group_id = module.eks.cluster_primary_security_group_id
   additional_allowed_security_group_ids = distinct(
     var.db_additional_allowed_security_group_ids
   )
@@ -93,7 +93,7 @@ module "alert_history_database" {
 
   vpc_id                     = module.network.vpc_id
   database_subnet_ids        = module.network.database_subnet_ids
-  eks_node_security_group_id = module.eks.node_security_group_id
+  eks_node_security_group_id = module.eks.cluster_primary_security_group_id
 
   additional_allowed_security_group_ids = distinct(
     var.db_additional_allowed_security_group_ids
@@ -124,7 +124,7 @@ module "elasticache" {
   environment                = var.environment
   vpc_id                     = module.network.vpc_id
   private_subnet_ids         = module.network.private_subnet_ids
-  eks_node_security_group_id = module.eks.node_security_group_id
+  eks_node_security_group_id = module.eks.cluster_primary_security_group_id
   additional_allowed_security_group_ids = distinct(
     var.redis_additional_allowed_security_group_ids
   )
@@ -154,5 +154,17 @@ module "github_oidc" {
   github_repositories = var.github_repositories
   github_ref_pattern  = var.github_ref_pattern
   managed_policy_arns = var.github_actions_managed_policy_arns
+  tags                = local.common_tags
+}
+
+module "route53" {
+  source = "../../../modules/route53"
+
+  zone_name           = var.route53_zone_name
+  record_name         = var.route53_record_name
+  create_alias_record = var.route53_create_alias_record
+  cluster_name        = local.cluster_name
+  ingress_namespace   = var.route53_ingress_namespace
+  ingress_name        = var.route53_ingress_name
   tags                = local.common_tags
 }

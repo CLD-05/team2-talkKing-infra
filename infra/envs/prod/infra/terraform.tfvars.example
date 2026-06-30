@@ -38,6 +38,12 @@ alert_history_db_skip_final_snapshot    = false
 
 redis_node_type = "cache.t3.small"
 
+route53_zone_name           = "talkking.site"
+route53_record_name         = "talkking.site"
+route53_create_alias_record = true
+route53_ingress_namespace   = "talkking-prod"
+route53_ingress_name        = "talkking-prod-ingress"
+
 github_ref_pattern = "ref:refs/heads/main"
 
 additional_access_entries = {}

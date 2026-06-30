@@ -27,6 +27,10 @@ output "cluster_security_group_id" {
   value = module.eks.cluster_security_group_id
 }
 
+output "cluster_primary_security_group_id" {
+  value = module.eks.cluster_primary_security_group_id
+}
+
 output "node_security_group_id" {
   value = module.eks.node_security_group_id
 }
@@ -81,4 +85,24 @@ output "alert_history_db_secret_name" {
 output "alert_history_db_managed_secret_arn" {
   description = "AWS-managed Alert History PostgreSQL master secret ARN."
   value       = module.alert_history_database.db_managed_secret_arn
+}
+
+output "route53_zone_id" {
+  description = "Route 53 hosted zone ID for talkking.site."
+  value       = module.route53.zone_id
+}
+
+output "route53_name_servers" {
+  description = "Name servers to configure at the domain registrar."
+  value       = module.route53.name_servers
+}
+
+output "route53_record_fqdn" {
+  description = "Route 53 alias record pointing to the prod ALB."
+  value       = module.route53.record_fqdn
+}
+
+output "route53_alb_dns_name" {
+  description = "Prod ALB selected using Kubernetes tags."
+  value       = module.route53.alb_dns_name
 }
