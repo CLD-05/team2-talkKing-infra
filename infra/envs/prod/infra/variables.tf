@@ -216,3 +216,28 @@ variable "ssm_parameters" {
   }))
   default = {}
 }
+
+variable "route53_zone_name" {
+  type    = string
+  default = "talkking.site"
+}
+
+variable "route53_record_name" {
+  type    = string
+  default = "talkking.site"
+}
+
+variable "route53_create_alias_record" {
+  type    = bool
+  default = true
+}
+
+variable "route53_ingress_namespace" {
+  type    = string
+  default = "talkking-prod"
+}
+
+variable "route53_ingress_name" {
+  type    = string
+  default = "talkking-prod-ingress"
+}

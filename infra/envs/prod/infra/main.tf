@@ -156,3 +156,15 @@ module "github_oidc" {
   managed_policy_arns = var.github_actions_managed_policy_arns
   tags                = local.common_tags
 }
+
+module "route53" {
+  source = "../../../modules/route53"
+
+  zone_name           = var.route53_zone_name
+  record_name         = var.route53_record_name
+  create_alias_record = var.route53_create_alias_record
+  cluster_name        = local.cluster_name
+  ingress_namespace   = var.route53_ingress_namespace
+  ingress_name        = var.route53_ingress_name
+  tags                = local.common_tags
+}
