@@ -170,9 +170,9 @@ module "route53" {
 }
 
 module "codex_log_bucket" {
-  source      = "./s3-codex-log"
-  project     = "codex"
-  environment = "prod"
+  source      = "../../../modules/s3-codex-log"
+  project     = var.project
+  environment = var.environment
   bucket_name = "team2-logs-bucket" # 💡 고유한 버킷 명명
 
   # 필요에 따라 로그 보존 주기 맞춤 세팅 가능 (안 적으면 기본값 적용)
