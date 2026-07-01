@@ -1,26 +1,50 @@
 variable "project" {
-  description = "Project name used in tags."
   type        = string
+  description = "Project name used in tags."
 }
 
 variable "environment" {
-  description = "Environment name used in tags."
   type        = string
+  description = "Environment name used in tags."
 }
 
 variable "bucket_name" {
-  description = "S3 bucket name."
   type        = string
+  description = "S3 bucket name."
 }
 
 variable "enable_versioning" {
-  description = "Whether bucket versioning is enabled."
   type        = bool
   default     = true
+  description = "Whether bucket versioning is enabled."
+}
+
+variable "glacier_transition_days" {
+  type        = number
+  default     = 30
+  description = "Days after which logs transition to Glacier."
+}
+
+variable "log_retention_days" {
+  type        = number
+  default     = 90
+  description = "Days after which logs are permanently deleted."
 }
 
 variable "tags" {
-  description = "Additional tags applied to all resources."
   type        = map(string)
   default     = {}
+  description = "Additional tags applied to all resources."
+}
+
+variable "glacier_transition_days" {
+  type        = number
+  default     = 30
+  description = "Days after which logs transition to Glacier."
+}
+
+variable "log_retention_days" {
+  type        = number
+  default     = 90
+  description = "Days after which logs are permanently deleted."
 }
