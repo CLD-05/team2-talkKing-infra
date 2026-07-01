@@ -100,7 +100,7 @@ resource "aws_iam_role_policy" "s3_write" {
       Action = [
         "s3:PutObject"
       ]
-      Resource = "arn:aws:s3:::team2-logs-bucket"
+      Resource = "arn:aws:s3:::team2-logs-bucket/*"
     }]
   })
 }
