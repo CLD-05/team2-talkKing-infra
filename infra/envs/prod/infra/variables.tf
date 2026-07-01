@@ -241,3 +241,8 @@ variable "route53_ingress_name" {
   type    = string
   default = "talkking-prod-ingress"
 }
+
+variable "bucket_name" {
+  type    = string
+  default = "team2-logs-bucket"
+}

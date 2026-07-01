@@ -168,3 +168,14 @@ module "route53" {
   ingress_name        = var.route53_ingress_name
   tags                = local.common_tags
 }
+
+module "codex_log_bucket" {
+  source      = "./s3-codex-log"
+  project     = "codex"
+  environment = "prod"
+  bucket_name = "team2-logs-bucket" # 💡 고유한 버킷 명명
+
+  # 필요에 따라 로그 보존 주기 맞춤 세팅 가능 (안 적으면 기본값 적용)
+  glacier_transition_days = 30 # 30일 뒤 Glacier로 이동시켜 비용 아끼기
+  log_retention_days      = 90 # 90일 뒤 완전히 날리기
+}

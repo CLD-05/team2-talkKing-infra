@@ -49,3 +49,5 @@ github_ref_pattern = "ref:refs/heads/main"
 additional_access_entries = {}
 
 ssm_parameters = {}
+
+bucket_name = "team2-logs-bucket"
