@@ -37,12 +37,10 @@ resource "aws_route53_record" "alias" {
   }
 }
 
-# 4. ACM 무료 SSL 인증서 신청
 resource "aws_acm_certificate" "this" {
   domain_name       = var.zone_name
   validation_method = "DNS"
 
-  # www.talkking.site 같은 서브도메인도 함께 쓸 수 있도록 와일드카드 자동 추가
   subject_alternative_names = ["*.${var.zone_name}"]
   tags                      = local.common_tags
 
@@ -51,7 +49,6 @@ resource "aws_acm_certificate" "this" {
   }
 }
 
-# 5. Route 53에 ACM 소유권 검증을 위한 DNS 레코드 자동 생성
 resource "aws_route53_record" "cert_validation" {
   for_each = {
     for dvo in aws_acm_certificate.this.domain_validation_options : dvo.domain_name => {
@@ -69,8 +66,7 @@ resource "aws_route53_record" "cert_validation" {
   zone_id         = aws_route53_zone.this.zone_id
 }
 
-# 6. AWS 내부에서 인증서 검증이 완료될 때까지 대기 처리
-resource "aws_acm_validation" "this" {
+resource "aws_acm_certificate_validation" "this" {
   certificate_arn         = aws_acm_certificate.this.arn
   validation_record_fqdns = [for record in aws_route53_record.cert_validation : record.fqdn]
 }
