@@ -36,15 +36,3 @@ variable "tags" {
   default     = {}
   description = "Additional tags applied to all resources."
 }
-
-variable "glacier_transition_days" {
-  type        = number
-  default     = 30
-  description = "Days after which logs transition to Glacier."
-}
-
-variable "log_retention_days" {
-  type        = number
-  default     = 90
-  description = "Days after which logs are permanently deleted."
-}
