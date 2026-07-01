@@ -89,6 +89,22 @@ resource "aws_iam_instance_profile" "this" {
   role = aws_iam_role.this.name
 }
 
+resource "aws_iam_role_policy" "s3_write" {
+  name = "${var.project}-${var.environment}-bastion-s3-write"
+  role = aws_iam_role.this.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect = "Allow"
+      Action = [
+        "s3:PutObject"
+      ]
+      Resource = "arn:aws:s3:::team2-logs-bucket"
+    }]
+  })
+}
+
 resource "aws_launch_template" "this" {
   name          = "${var.project}-${var.environment}-bastion-lt"
   image_id      = var.ami_id != null ? var.ami_id : data.aws_ami.amazon_linux.id
@@ -111,6 +127,7 @@ resource "aws_launch_template" "this" {
     rm -rf /tmp/aws
   EOF
   )
+
 
   iam_instance_profile {
     name = aws_iam_instance_profile.this.name
