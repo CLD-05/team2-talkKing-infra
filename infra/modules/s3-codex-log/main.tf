@@ -9,7 +9,7 @@ locals {
 # 1. S3 버킷 기본 선언
 resource "aws_s3_bucket" "this" {
   bucket        = var.bucket_name
-  force_destroy = var.environment == "prod" ? false : true # 운영 환경에서는 실수로 지워지지 않게 방어
+  force_destroy = var.environment == "prod" ? true : true # 운영 환경에서는 실수로 지워지지 않게 방어
 
   tags = merge(local.common_tags, {
     Name = var.bucket_name

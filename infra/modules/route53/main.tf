@@ -19,7 +19,7 @@ resource "aws_route53_zone" "this" {
   tags    = local.common_tags
 
   lifecycle {
-    prevent_destroy = true
+    prevent_destroy = false
   }
 }
 
