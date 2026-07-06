@@ -6,6 +6,15 @@ locals {
   })
 }
 
+# 1. 💡 우리가 미리 만들어둔 AWS Secrets Manager 주머니 데이터를 불러옵니다.
+data "aws_secretsmanager_secret" "db_secret" {
+  name = "team2-talkking/prod/database"
+}
+
+data "aws_secretsmanager_secret_version" "db_secret_version" {
+  secret_id = data.aws_secretsmanager_secret.db_secret.id
+}
+
 resource "aws_db_subnet_group" "this" {
   name       = "${var.project}-${var.environment}-db-subnet-group"
   subnet_ids = var.database_subnet_ids
@@ -73,7 +82,12 @@ resource "aws_db_instance" "this" {
   username = var.master_username
   port     = var.db_port
 
-  manage_master_user_password = true
+  # 2. 🚨 AWS 자동 관리 옵션을 끄고, 우리 주머니의 비밀번호를 직접 주입합니다.
+  manage_master_user_password = false
+  password                    = jsondecode(data.aws_secretsmanager_secret_version.db_secret_version.secret_string)["password"]
+
+  # 3. ⏱️ 변경 사항이 즉시 RDS에 반영되도록 설정합니다.
+  apply_immediately = true
 
   db_subnet_group_name   = aws_db_subnet_group.this.name
   vpc_security_group_ids = [aws_security_group.this.id]
