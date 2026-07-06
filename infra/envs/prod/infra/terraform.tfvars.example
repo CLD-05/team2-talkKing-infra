@@ -30,7 +30,7 @@ db_skip_final_snapshot = false
 
 alert_history_db_name                   = "errorops"
 alert_history_db_instance_class         = "db.t3.small"
-alert_history_db_engine_version         = "16.9"
+alert_history_db_engine_version         = "16.13"
 alert_history_db_parameter_group_family = "postgres16"
 alert_history_db_master_username        = "postgres"
 alert_history_db_deletion_protection    = false
