@@ -1,0 +1,4 @@
+aws_region        = "ap-northeast-2"
+project           = "team2-talkking"
+team              = "team2"
+state_bucket_name = "tfstate-lionkdt5-team2"

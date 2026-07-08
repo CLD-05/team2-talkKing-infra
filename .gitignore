@@ -1,0 +1,24 @@
+# Terraform working directories and local state
+**/.terraform/*
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+.terraform.lock.hcl
+crash.log
+crash.*.log
+override.tf
+*_override.tf
+.terraformrc
+terraform.rc
+
+# Environment-local inputs and backend config
+terraform.tfvars
+*.auto.tfvars
+*.auto.tfvars.json
+backend.tf
+
+# Credentials and local keys
+*.pem
+*.key
+credentials

@@ -1,0 +1,19 @@
+aws_region  = "ap-northeast-2"
+project     = "team2-talkking"
+environment = "dev"
+
+allowed_ssh_cidrs = [
+  "114.206.134.218/32"
+]
+
+bastion_key_name = null
+
+cluster_endpoint_public_access_cidrs = [
+  "114.206.134.218/32"
+]
+
+alert_history_db_name                   = "errorops"
+alert_history_db_instance_class         = "db.t3.micro"
+alert_history_db_engine_version         = "16.9"
+alert_history_db_parameter_group_family = "postgres16"
+alert_history_db_master_username        = "postgres"

@@ -1,0 +1,53 @@
+aws_region  = "ap-northeast-2"
+project     = "team2-talkking"
+environment = "prod"
+
+enable_bastion = true
+
+allowed_ssh_cidrs = [
+  "YOUR_PUBLIC_IP/32"
+]
+
+bastion_key_name = null
+
+ecr_repositories = []
+
+cluster_endpoint_public_access       = false
+cluster_endpoint_public_access_cidrs = []
+
+node_instance_types = ["t3.large"]
+node_min_size       = 2
+node_desired_size   = 2
+node_max_size       = 6
+
+attach_load_balancer_controller_policy = false
+load_balancer_controller_policy_arn    = "arn:aws:iam::495599735720:policy/REPLACE_WITH_EXISTING_ALB_CONTROLLER_POLICY"
+
+db_instance_class      = "db.t3.small"
+db_name                = "talkking"
+db_deletion_protection = false
+db_skip_final_snapshot = false
+
+alert_history_db_name                   = "errorops"
+alert_history_db_instance_class         = "db.t3.small"
+alert_history_db_engine_version         = "16.13"
+alert_history_db_parameter_group_family = "postgres16"
+alert_history_db_master_username        = "postgres"
+alert_history_db_deletion_protection    = false
+alert_history_db_skip_final_snapshot    = false
+
+redis_node_type = "cache.t3.small"
+
+route53_zone_name           = "talkking.site"
+route53_record_name         = "talkking.site"
+route53_create_alias_record = true
+route53_ingress_namespace   = "talkking-prod"
+route53_ingress_name        = "talkking-prod-ingress"
+
+github_ref_pattern = "ref:refs/heads/main"
+
+additional_access_entries = {}
+
+ssm_parameters = {}
+
+bucket_name = "team2-logs-bucket"
